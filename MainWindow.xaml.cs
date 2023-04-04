@@ -41,9 +41,6 @@ namespace CA1_WPF_XAML
             // Initialize list of wards
             wards = new List<Ward>();
 
-            // Load ward data from JSON file
-            LoadWards();
-
             // Load data from file
             try
             {
@@ -163,6 +160,21 @@ namespace CA1_WPF_XAML
                 // Display error message if unable to read JSON string from file
                 MessageBox.Show($"Unable to load data from JSON file: {ex.Message}");
             }
+
+            // Create new ward
+            Ward marxBrothersWard = new Ward("Marx Brothers Ward", 3);
+
+            // Add patients to ward
+            Patient chico = new Patient("Chico", new DateTime(1956, 1, 1), Patient.BloodType.A, marxBrothersWard);
+            Patient graucho = new Patient("Graucho", new DateTime(1966, 1, 1), Patient.BloodType.AB, marxBrothersWard);
+            Patient harpo = new Patient("Harpo", new DateTime(1976, 1, 1), Patient.BloodType.B, marxBrothersWard);
+
+            marxBrothersWard.AddPatient(chico);
+            marxBrothersWard.AddPatient(graucho);
+            marxBrothersWard.AddPatient(harpo);
+
+            // Add ward to list of wards
+            wards.Add(marxBrothersWard);
         }
 
         private void DisplayWards()
@@ -173,10 +185,29 @@ namespace CA1_WPF_XAML
 
             // Display list of patients in selected ward
             DisplayPatients();
+
+            // Clear the list box
+            lbWards.Items.Clear();
+
+            // Add each ward to the list box
+            foreach (Ward ward in wards)
+            {
+                lbWards.Items.Add($"{ward.Name} ({ward.Patients.Count}/{ward.Capacity})");
+            }
+
+            // Select the first ward if there are any wards
+            if (lbWards.Items.Count > 0)
+            {
+                lbWards.SelectedIndex = 0;
+            }
+
         }
 
         private void DisplayPatients()
-        {
+        {   
+            // Clear the list box
+            lbPatients.Items.Clear();
+
             // Get selected ward
             Ward selectedWard = (Ward)lbWards.SelectedItem;
 
@@ -342,6 +373,7 @@ namespace CA1_WPF_XAML
 
             // Update display for selected Patient
             UpdatePatientDisplay();
+
 
             if (selectedPatient != null)
             {
